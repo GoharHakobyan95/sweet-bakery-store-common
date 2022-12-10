@@ -58,22 +58,27 @@ public class UserService {
 
     public void saveUser(User user, int cityId, String addressName, MultipartFile file) throws IOException {
         setUserPic(user, file);
-        Optional<City> city = cityRepository.findById(cityId);
-        Address address = new Address();
-        address.setCity(city.get());
-        address.setName(addressName);
-        addressRepository.save(address);
-        user.setRole(Role.USER);
-        user.setCreateAt(new Date());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setActive(false);
-        user.setVerifyToken(UUID.randomUUID().toString());
-        userRepository.save(user);
-        mailService.sendHtmlMail(user.getEmail(), "Please verify your registration.",
-                "Hi " + user.getName() + "," + "\n" +
-                        "Please verify your account by clicking on this link " +
-                        "<a href=\"http://localhost:8080/verify/user?email=" + user.getEmail() +
-                        "&token=" + user.getVerifyToken() + "\">Activate</a>");
+        Optional<City> cityOptional = cityRepository.findById(cityId);
+        cityOptional.ifPresent(city -> {
+            Address address = new Address();
+            address.setCity(city);
+            address.setName(addressName);
+            Address savedAddress = addressRepository.save(address);
+            user.setRole(Role.USER);
+            user.setCreateAt(new Date());
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setActive(false);
+            user.setVerifyToken(UUID.randomUUID().toString());
+            user.setAddress(savedAddress);
+            userRepository.save(user);
+            mailService.sendHtmlMail(user.getEmail(), "Please verify your registration.",
+                    "Hi " + user.getName() + "," + "\n" +
+                            "Please verify your account by clicking on this link " +
+                            "<a href=\"http://localhost:8080/verify/user?email=" + user.getEmail() +
+                            "&token=" + user.getVerifyToken() + "\">Activate</a>");
+        });
+
+
     }
 
     public User save(User user) {

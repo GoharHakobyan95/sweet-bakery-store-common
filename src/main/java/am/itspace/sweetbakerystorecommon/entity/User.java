@@ -43,7 +43,6 @@ public class User {
     @Size(min = 9, max = 20)
     private String phone;
 
-    @NotNull(message = "Address can't be empty.")
     @ManyToOne
     private Address address;
 
