@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,8 +82,8 @@ public class UserService {
 
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
+    public User save(User map) {
+        return userRepository.save(map);
     }
 
     //Create default user by Admin Role
@@ -161,7 +162,6 @@ public class UserService {
         userByEmail.ifPresent(user -> userByEmail.get());
         return userByEmail.get();
     }
-
 
     public void updateUser(User user, MultipartFile file) throws IOException {
         setUserPic(user, file);
