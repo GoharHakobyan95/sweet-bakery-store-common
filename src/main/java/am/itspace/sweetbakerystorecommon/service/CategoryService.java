@@ -32,9 +32,9 @@ public class CategoryService {
 
     }
 
-    public void deleteById(int id, CurrentUser currentUser) {
+    public void deleteById(int id, User user) {
         Optional<Category> byId = categoryRepository.findById(id);
-        if (byId.isPresent() && currentUser.getUser().getId() == byId.get().getUser().getId()) {
+        if (byId.isPresent() && user.getId() == byId.get().getUser().getId()) {
             categoryRepository.deleteById(id);
         }
         ResponseEntity.notFound().build();
