@@ -66,10 +66,6 @@ public class PaymentService {
         return modelMapper.map(savedCard, Payment.class);
     }
 
-    public List<Payment> getAllPayments() {
-        return paymentRepository.findAll();
-    }
-
     public Optional<Payment> findById(int id) {
         return paymentRepository.findById(id);
     }
@@ -95,6 +91,7 @@ public class PaymentService {
         Page<Payment> paymentPages = paymentRepository.findAll(pageable);
         return new PageImpl<>(paymentPages.getContent(), pageable, paymentPages.getSize());
     }
+
     public void deleteById(int id) {
         paymentRepository.deleteById(id);
     }
