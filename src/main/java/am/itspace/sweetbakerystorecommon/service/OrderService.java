@@ -8,6 +8,7 @@ import am.itspace.sweetbakerystorecommon.entity.*;
 import am.itspace.sweetbakerystorecommon.repository.OrderRepository;
 import am.itspace.sweetbakerystorecommon.repository.PaymentRepository;
 import am.itspace.sweetbakerystorecommon.repository.ProductRepository;
+import am.itspace.sweetbakerystorecommon.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
 
 import org.apache.commons.io.IOUtils;
@@ -44,6 +45,11 @@ public class OrderService {
     public byte[] getProductImage(String fileName) throws IOException {
         InputStream inputStream = new FileInputStream(folderPath + File.separator + fileName);
         return IOUtils.toByteArray(inputStream);
+    }
+
+    public Page<Order> findPaginated(Pageable pageable, CurrentUser currentUser) {
+        Page<Order> allOrders = orderRepository.findOrdersByUser_Id(currentUser.getUser().getId());
+        return new PageImpl<>(allOrders.getContent(), pageable, allOrders.getSize());
     }
 
     @Transactional(readOnly = true)
@@ -91,9 +97,6 @@ public class OrderService {
         }
     }
 
-    public List<Order> getAllOrders(User user) {
-        return orderRepository.findOrdersByUser_Id(user.getId());
-    }
 
     public Order saveOrder(User user, CreateOrderDto createOrderDto, Product product, Integer quantity) {
         Optional<Payment> paymentByUserId = paymentRepository.findById(user.getId());

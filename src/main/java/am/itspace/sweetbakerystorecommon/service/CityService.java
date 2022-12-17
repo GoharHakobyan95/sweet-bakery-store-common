@@ -27,12 +27,6 @@ public class CityService {
         Page<City> categoryPages = cityRepository.findAll(pageable);
         return new PageImpl<>(categoryPages.getContent(), pageable, categoryPages.getSize());
     }
-    public List<CityResponseDto> findAllCities() {
-        List<City> cities = cityRepository.findAll();
-        return cities.stream()
-                .map(city -> modelMapper.map(city, CityResponseDto.class))
-                .collect(Collectors.toList());
-    }
 
     public List<City> findAll() {
         return cityRepository.findAll();

@@ -34,11 +34,6 @@ public class PaymentService {
     @Resource(name = "basketDto")
     private BasketDto basketDto;
 
-    public Page<Payment> findPaginated(Pageable pageable) {
-        Page<Payment> paymentPages = paymentRepository.findAll(pageable);
-        return new PageImpl<>(paymentPages.getContent(), pageable, paymentPages.getSize());
-    }
-
     //Before each order user fill in card details
     public void save(CheckoutDto checkoutDto, User user) {
         Payment payment = new Payment();
@@ -96,6 +91,10 @@ public class PaymentService {
         return modelMapper.map(savedPayment, PaymentResponseDto.class);
     }
 
+    public Page<Payment> findPaginated(Pageable pageable) {
+        Page<Payment> paymentPages = paymentRepository.findAll(pageable);
+        return new PageImpl<>(paymentPages.getContent(), pageable, paymentPages.getSize());
+    }
     public void deleteById(int id) {
         paymentRepository.deleteById(id);
     }
