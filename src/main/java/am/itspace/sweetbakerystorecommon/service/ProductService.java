@@ -70,6 +70,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+
     public Long getCountOfProducts() {
         return productRepository.count();
     }
