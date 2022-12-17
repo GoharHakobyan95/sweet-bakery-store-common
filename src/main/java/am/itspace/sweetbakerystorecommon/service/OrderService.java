@@ -2,10 +2,11 @@ package am.itspace.sweetbakerystorecommon.service;
 
 import am.itspace.sweetbakerystorecommon.dto.BasketDto;
 import am.itspace.sweetbakerystorecommon.dto.BasketProductDto;
-import am.itspace.sweetbakerystorecommon.dto.CheckoutDto;
+import am.itspace.sweetbakerystorecommon.dto.orderDto.CheckoutDto;
+import am.itspace.sweetbakerystorecommon.dto.orderDto.CreateOrderDto;
 import am.itspace.sweetbakerystorecommon.entity.*;
-import am.itspace.sweetbakerystorecommon.repository.AddressRepository;
 import am.itspace.sweetbakerystorecommon.repository.OrderRepository;
+import am.itspace.sweetbakerystorecommon.repository.PaymentRepository;
 import am.itspace.sweetbakerystorecommon.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -29,9 +31,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-
     private final ProductRepository productRepository;
-    private final AddressRepository addressRepository;
+
+    private final PaymentRepository paymentRepository;
 
     @Resource(name = "basketDto")
     private BasketDto basketDto;
@@ -90,5 +92,32 @@ public class OrderService {
 
             }
         }
+    }
+
+    public List<Order> getAllOrders(User user) {
+        return orderRepository.findOrdersByUser_Id(user.getId());
+    }
+
+    public Order saveOrder(User user, CreateOrderDto createOrderDto, Product product, Integer quantity) {
+        Optional<Payment> paymentByUserId = paymentRepository.findById(user.getId());
+        Order newOrder = Order.builder()
+                .product(createOrderDto.getProduct())
+                .orderStatus(OrderStatus.IN_PROCESS)
+                .orderDate(new Date())
+                .count(createOrderDto.getCount())
+                .isGift(createOrderDto.isGift())
+                .wishNotes(createOrderDto.getWishNotes())
+                .user(user)
+                .address(user.getAddress())
+                .payment(paymentByUserId.get())
+                .build();
+        Order finalOrder = orderRepository.save(newOrder);
+        product.setInStore(product.getInStore() - quantity);
+        productRepository.save(product);
+        return finalOrder;
+    }
+
+    public void delete(Order order) {
+        orderRepository.delete(order);
     }
 }
