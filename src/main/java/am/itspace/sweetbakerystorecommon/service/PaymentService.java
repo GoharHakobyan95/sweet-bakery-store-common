@@ -13,6 +13,7 @@ import am.itspace.sweetbakerystorecommon.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +35,8 @@ public class PaymentService {
     private BasketDto basketDto;
 
     public Page<Payment> findPaginated(Pageable pageable) {
-        return paymentRepository.findAll(pageable);
+        Page<Payment> paymentPages = paymentRepository.findAll(pageable);
+        return new PageImpl<>(paymentPages.getContent(), pageable, paymentPages.getSize());
     }
 
     //Before each order user fill in card details

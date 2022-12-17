@@ -6,6 +6,9 @@ import am.itspace.sweetbakerystorecommon.entity.City;
 import am.itspace.sweetbakerystorecommon.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +23,10 @@ public class CityService {
     private final CityRepository cityRepository;
     private final ModelMapper modelMapper;
 
-
+    public Page<City> findPaginated(Pageable pageable) {
+        Page<City> categoryPages = cityRepository.findAll(pageable);
+        return new PageImpl<>(categoryPages.getContent(), pageable, categoryPages.getSize());
+    }
     public List<CityResponseDto> findAllCities() {
         List<City> cities = cityRepository.findAll();
         return cities.stream()
