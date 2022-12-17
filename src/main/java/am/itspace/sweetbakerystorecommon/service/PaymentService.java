@@ -1,6 +1,6 @@
 package am.itspace.sweetbakerystorecommon.service;
 
-import am.itspace.sweetbakerystorecommon.dto.BasketDto;
+import am.itspace.sweetbakerystorecommon.dto.basketDto.BasketDto;
 import am.itspace.sweetbakerystorecommon.dto.orderDto.CheckoutDto;
 import am.itspace.sweetbakerystorecommon.dto.paymentDto.CreatePaymentDto;
 import am.itspace.sweetbakerystorecommon.dto.paymentDto.PaymentResponseDto;
