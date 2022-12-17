@@ -117,5 +117,14 @@ public class ProductService {
     }
 
 
+    public void save(Product product, User user) {
+        Optional<Product> editedProduct = productRepository.findById(product.getId());
+        if (editedProduct.isPresent()) {
+            product.setUser(user);
+            productRepository.save(product);
+        }
+    }
+
 }
+
 

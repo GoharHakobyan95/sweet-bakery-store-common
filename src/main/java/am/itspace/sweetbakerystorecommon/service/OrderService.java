@@ -1,7 +1,7 @@
 package am.itspace.sweetbakerystorecommon.service;
 
-import am.itspace.sweetbakerystorecommon.dto.BasketDto;
-import am.itspace.sweetbakerystorecommon.dto.BasketProductDto;
+import am.itspace.sweetbakerystorecommon.dto.basketDto.BasketDto;
+import am.itspace.sweetbakerystorecommon.dto.basketDto.BasketProductDto;
 import am.itspace.sweetbakerystorecommon.dto.orderDto.CheckoutDto;
 import am.itspace.sweetbakerystorecommon.dto.orderDto.CreateOrderDto;
 import am.itspace.sweetbakerystorecommon.entity.*;
@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 

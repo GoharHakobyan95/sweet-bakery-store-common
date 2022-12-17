@@ -1,5 +1,7 @@
 package am.itspace.sweetbakerystorecommon.service;
 
+import am.itspace.sweetbakerystorecommon.dto.cityDto.CityResponseDto;
+import am.itspace.sweetbakerystorecommon.dto.cityDto.UpdateCityDto;
 import am.itspace.sweetbakerystorecommon.entity.City;
 import am.itspace.sweetbakerystorecommon.repository.CityRepository;
 import lombok.RequiredArgsConstructor;

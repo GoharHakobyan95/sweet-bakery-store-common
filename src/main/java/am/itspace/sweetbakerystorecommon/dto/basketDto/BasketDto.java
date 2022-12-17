@@ -1,4 +1,4 @@
-package am.itspace.sweetbakerystorecommon.dto;
+package am.itspace.sweetbakerystorecommon.dto.basketDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
