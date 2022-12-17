@@ -1,4 +1,4 @@
-package am.itspace.sweetbakerystorecommon.dto;
+package am.itspace.sweetbakerystorecommon.dto.orderDto;
 
 
 import am.itspace.sweetbakerystorecommon.entity.CardType;

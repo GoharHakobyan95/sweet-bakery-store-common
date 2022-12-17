@@ -78,8 +78,6 @@ public class UserService {
                             "<a href=\"http://localhost:8080/verify/user?email=" + user.getEmail() +
                             "&token=" + user.getVerifyToken() + "\">Activate</a>");
         });
-
-
     }
 
     public User save(User map) {
