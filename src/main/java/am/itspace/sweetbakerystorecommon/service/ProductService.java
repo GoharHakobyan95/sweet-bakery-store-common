@@ -1,7 +1,5 @@
 package am.itspace.sweetbakerystorecommon.service;
 
-import am.itspace.sweetbakerystorecommon.dto.BasketDto;
-import am.itspace.sweetbakerystorecommon.dto.BasketRequest;
 import am.itspace.sweetbakerystorecommon.entity.Category;
 import am.itspace.sweetbakerystorecommon.entity.FavoriteProduct;
 import am.itspace.sweetbakerystorecommon.entity.Product;
@@ -9,16 +7,18 @@ import am.itspace.sweetbakerystorecommon.entity.User;
 import am.itspace.sweetbakerystorecommon.repository.CategoryRepository;
 import am.itspace.sweetbakerystorecommon.repository.FavoriteProductRepository;
 import am.itspace.sweetbakerystorecommon.repository.ProductRepository;
+import am.itspace.sweetbakerystorecommon.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,12 +36,10 @@ public class ProductService {
     @Value("${sweet.bakery.store.images.folder}")
     private String folderPath;
 
-    @Resource(name = "basketDto")
-    private BasketDto basketDto;
-
 
     public Page<Product> findPaginated(Pageable pageable) {
-        return productRepository.findAll(pageable);
+        Page<Product> productPages = productRepository.findAll(pageable);
+        return new PageImpl<>(productPages.getContent(), pageable, productPages.getSize());
     }
 
     public byte[] getProductImage(String fileName) throws IOException {
@@ -53,8 +51,11 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public Optional<Product> findById(int id) {
+        return productRepository.findById(id);
+    }
 
-    public void save(Product product, MultipartFile file, User user) throws IOException {
+    public Product saveProduct(Product product, MultipartFile file, User user) throws IOException {
         if (!file.isEmpty() && file.getSize() > 0) {
             String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File newFile = new File(folderPath + File.separator + filename);
@@ -65,14 +66,8 @@ public class ProductService {
         Category category = categoryRepository.getReferenceById(product.getCategory().getId());
         product.setCategory(category);
         productRepository.save(product);
-    }
 
-    public Optional<Product> findById(int id) {
-        return productRepository.findById(id);
-    }
-
-    public void saveProduct(Product product) {
-        productRepository.save(product);
+        return productRepository.save(product);
     }
 
     public Long getCountOfProducts() {
@@ -81,12 +76,6 @@ public class ProductService {
 
     public Double getAmount() {
         return productRepository.totalSale();
-    }
-
-
-    public void addBasket(User user, int productId, BasketRequest basketRequest) {
-        Optional<Product> byProductId = productRepository.findById(productId);
-        byProductId.ifPresent(product -> product.setId(productId));
     }
 
     public void addFavoriteProduct(User user,
@@ -106,14 +95,6 @@ public class ProductService {
 
     }
 
-    public void save(Product product,  User user) {
-        Optional<Product> editedProduct = productRepository.findById(product.getId());
-        if (editedProduct.isPresent()) {
-            product.setUser(user);
-            productRepository.save(product);
-        }
-    }
-
     public List<Product> getAllProducts(String productList) {
         if (productList != null && !productList.equals(" ")) {
             return productRepository.findAll(productList);
@@ -124,5 +105,16 @@ public class ProductService {
     public List<Product> getProductList() {
         return productRepository.findAll();
     }
+
+
+    public void deleteProductById(int id, CurrentUser currentUser) {
+        Optional<Product> byId = productRepository.findById(id);
+        if (byId.isPresent() && currentUser.getUser().getId() == byId.get().getUser().getId()) {
+            productRepository.deleteById(id);
+        }
+        ResponseEntity.notFound().build();
+    }
+
+
 }
 

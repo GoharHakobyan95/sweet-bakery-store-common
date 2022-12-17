@@ -7,6 +7,7 @@ import am.itspace.sweetbakerystorecommon.repository.CityRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +22,13 @@ public class AddressService {
     private final CityRepository cityRepository;
 
     public Page<Address> findPaginated(Pageable pageable) {
-        return addressRepository.findAll(pageable);
+        Page<Address> addressPages = addressRepository.findAll(pageable);
+        return new PageImpl<>(addressPages.getContent(), pageable, addressPages.getSize());
     }
-
 
     public Address saveAddress(Address address) {
         return addressRepository.save(address);
     }
-
 
     public void save(Address address, City city) {
         cityRepository.save(city);
@@ -43,5 +43,9 @@ public class AddressService {
         Optional<Address> addressById = addressRepository.findById(addressId);
         addressById.ifPresent(address -> addressById.get());
         return addressById;
+    }
+
+    public void deleteAddressById(int id) {
+        addressRepository.deleteById(id);
     }
 }

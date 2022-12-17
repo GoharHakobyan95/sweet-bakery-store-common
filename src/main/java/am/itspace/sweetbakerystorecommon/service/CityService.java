@@ -8,12 +8,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class CityService {
 
-    private final CityRepository cityRepository;
+    private  final CityRepository cityRepository;
 
     public List<City> findAll() {
         return cityRepository.findAll();
