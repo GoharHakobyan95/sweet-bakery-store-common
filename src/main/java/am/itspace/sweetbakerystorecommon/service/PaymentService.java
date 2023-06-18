@@ -34,33 +34,37 @@ public class PaymentService {
     @Resource(name = "basketDto")
     private BasketDto basketDto;
 
-    //Before each order user fill in card details
+    //Users fill in card details, before each order
     public void save(CheckoutDto checkoutDto, User user) {
-        Payment payment = new Payment();
-        payment.setCardNumber(checkoutDto.getCardNumber());
-        payment.setCvcCode(checkoutDto.getCvcCode());
-        payment.setStatus(Status.PAYED);
-        payment.setCardType(checkoutDto.getCardType());
-        payment.setExpirationDate(checkoutDto.getExpirationDate());
-        payment.setUser(user);
+        Payment payment = Payment.builder()
+                .user(user)
+                .status(Status.PAYED)
+                .cardNumber(checkoutDto.getCardNumber())
+                .cvcCode(checkoutDto.getCvcCode())
+                .cardType(checkoutDto.getCardType())
+                .expirationDate(checkoutDto.getExpirationDate())
+                .build();
+
         if (checkoutDto.getProductId() != null) {
             Optional<Product> productById = productService.findById(checkoutDto.getProductId());
             productById.ifPresent(product -> payment.setTotalAmount(checkoutDto.getQuantity() * product.getPrice()));
         } else {
             payment.setTotalAmount(basketDto.getTotal());
         }
+
         Payment savedPayment = paymentRepository.save(payment);
-        orderService.save(checkoutDto, savedPayment, user);
+        orderService.saveOrder(checkoutDto, savedPayment, user);
     }
+
 
     public Payment saveCard(CreatePaymentDto createPaymentDto, User user) {
         Payment payment = Payment.builder()
+                .user(user)
                 .cardNumber(createPaymentDto.getCardNumber())
                 .cardType(createPaymentDto.getCardType())
                 .cvcCode(createPaymentDto.getCvcCode())
                 .expirationDate(createPaymentDto.getExpirationDate())
                 .status(createPaymentDto.getStatus())
-                .user(user)
                 .build();
         Payment savedCard = paymentRepository.save(payment);
         return modelMapper.map(savedCard, Payment.class);
@@ -76,13 +80,16 @@ public class PaymentService {
     }
 
 
-    public PaymentResponseDto update(Payment payment, UpdatePaymentDto updatePaymentDto, User user) {
-        payment.setId(updatePaymentDto.getId());
-        payment.setCardNumber(updatePaymentDto.getCardNumber());
-        payment.setCvcCode(updatePaymentDto.getCvcCode());
-        payment.setStatus(updatePaymentDto.getStatus());
-        payment.setExpirationDate(updatePaymentDto.getExpirationDate());
-        payment.setUser(user);
+    public PaymentResponseDto update(UpdatePaymentDto updatePaymentDto, User user) {
+        Payment payment = Payment.builder()
+                .id(updatePaymentDto.getId())
+                .cardNumber(updatePaymentDto.getCardNumber())
+                .cvcCode(updatePaymentDto.getCvcCode())
+                .status(updatePaymentDto.getStatus())
+                .expirationDate(updatePaymentDto.getExpirationDate())
+                .user(user)
+                .build();
+
         Payment savedPayment = paymentRepository.save(payment);
         return modelMapper.map(savedPayment, PaymentResponseDto.class);
     }
@@ -95,4 +102,5 @@ public class PaymentService {
     public void deleteById(int id) {
         paymentRepository.deleteById(id);
     }
+
 }

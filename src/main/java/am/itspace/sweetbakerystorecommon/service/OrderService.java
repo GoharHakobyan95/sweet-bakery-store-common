@@ -10,7 +10,6 @@ import am.itspace.sweetbakerystorecommon.repository.PaymentRepository;
 import am.itspace.sweetbakerystorecommon.repository.ProductRepository;
 import am.itspace.sweetbakerystorecommon.security.CurrentUser;
 import lombok.RequiredArgsConstructor;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -47,7 +46,7 @@ public class OrderService {
     }
 
     public Page<Order> findPaginated(Pageable pageable, CurrentUser currentUser) {
-        Page<Order> allOrders = orderRepository.findOrdersByUser_Id(currentUser.getUser().getId());
+        Page<Order> allOrders = orderRepository.findOrdersByUser_Id(currentUser.getUser().getId(),pageable);
         return new PageImpl<>(allOrders.getContent(), pageable, allOrders.getSize());
     }
 
@@ -61,14 +60,14 @@ public class OrderService {
         return orderRepository.findById(id);
     }
 
-    public void save(CheckoutDto checkoutDto, Payment payment, User user) {
-        //get product id when the customer making an order
-        if (checkoutDto.getProductId() != null) {
-            Optional<Product> productByID = productRepository.findById(checkoutDto.getProductId());
-            //add currentUser address and card details to order, when user buy a single product
-            Order finalOrder = Order.builder()
+    // saveOrder is used to save order for a single or multiple products selected by the user
+    public void saveOrder(CheckoutDto checkoutDto, Payment payment, User user) {
+
+        Optional<Product> product = productRepository.findById(checkoutDto.getProductId());
+        if (product.isPresent()) {
+            Order singleOrder = Order.builder()
                     .user(user)
-                    .product(productByID.get())
+                    .product(product.get())
                     .orderDate(new Date())
                     .payment(payment)
                     .wishNotes(checkoutDto.getWishNotes())
@@ -76,24 +75,27 @@ public class OrderService {
                     .address(user.getAddress())
                     .orderStatus(OrderStatus.DONE)
                     .isGift(checkoutDto.isGift()).build();
-            orderRepository.save(finalOrder);
+            orderRepository.save(singleOrder);
         } else {
-            for (BasketProductDto basketProductDto : basketDto.getBasketProductDtos()) {
-                //add currentUser address and card details to order,when user buy products from his basket
-                Order finalOrder = Order.builder()
-                        .user(user)
-                        .product(basketProductDto.getProduct())
-                        .orderDate(new Date())
-                        .payment(payment)
-                        .wishNotes(checkoutDto.getWishNotes())
-                        .count(basketProductDto.getQuantity())
-                        .address(user.getAddress())
-                        .orderStatus(OrderStatus.DONE)
-                        .isGift(checkoutDto.isGift()).build();
-                orderRepository.save(finalOrder);
-
-            }
+            createOrderFromBasket(checkoutDto, payment, user);
         }
+    }
+
+    // createOrderFromBasket is used to save order for multiple products selected by the user from Basket
+    private void createOrderFromBasket(CheckoutDto checkoutDto, Payment payment, User user) {
+        basketDto.getBasketProductDtos().forEach(basketProductDto -> {
+            Order multipleOrder = Order.builder()
+                    .user(user)
+                    .product(basketProductDto.getProduct())
+                    .orderDate(new Date())
+                    .payment(payment)
+                    .wishNotes(checkoutDto.getWishNotes())
+                    .count(basketProductDto.getQuantity())
+                    .address(user.getAddress())
+                    .orderStatus(OrderStatus.DONE)
+                    .isGift(checkoutDto.isGift()).build();
+            orderRepository.save(multipleOrder);
+        });
     }
 
 

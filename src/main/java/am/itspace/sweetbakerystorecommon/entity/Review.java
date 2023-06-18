@@ -26,4 +26,8 @@ public class Review {
     private Product product;
     @ManyToOne
     private User user;
+
+    public Review(String review) {
+        this.text = review;
+    }
 }
