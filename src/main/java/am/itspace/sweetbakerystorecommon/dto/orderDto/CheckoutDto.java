@@ -44,4 +44,32 @@ public class CheckoutDto {
 
     private Integer quantity;
 
+    public CheckoutDto(String cardNumber, String cvcCode, Date expirationDate, Status status, CardType cardType, boolean isGift, String wishNotes, Integer productId, Integer quantity) {
+        this.cardNumber = cardNumber;
+        this.cvcCode = cvcCode;
+        this.expirationDate = expirationDate;
+        this.status = status;
+        this.cardType = cardType;
+        this.isGift = isGift;
+        this.wishNotes = wishNotes;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+
+
+    public CheckoutDto(String cardNumber, String cvcCode, Date expirationDate, Status status, CardType cardType, Integer productId, Integer quantity) {
+        this.cardNumber = cardNumber;
+        this.cvcCode = cvcCode;
+        this.expirationDate = expirationDate;
+        this.status = status;
+        this.cardType = cardType;
+        this.isGift = isGift;
+        this.wishNotes = wishNotes;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public CheckoutDto() {
+    }
 }

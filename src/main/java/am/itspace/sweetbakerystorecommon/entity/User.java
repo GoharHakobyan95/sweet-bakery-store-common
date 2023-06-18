@@ -58,4 +58,7 @@ public class User {
 
     private String verifyToken;
 
+    public User(String ...name) {
+        this.name= String.valueOf(name);
+    }
 }

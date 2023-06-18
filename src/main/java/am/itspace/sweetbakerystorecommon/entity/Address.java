@@ -21,4 +21,8 @@ public class Address {
     @ManyToOne
     private City city;
 
+    public Address(String name, City city) {
+        this.name= name;
+        this.city= city;
+    }
 }

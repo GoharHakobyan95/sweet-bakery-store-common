@@ -18,4 +18,8 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+
+    public City(String name) {
+        this.name= name;
+    }
 }

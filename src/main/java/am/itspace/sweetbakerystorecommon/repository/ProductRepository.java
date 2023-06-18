@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     long count();
-    @Query(value = " SELECT SUM(p.price * user_order.count) FROM user_order "
-            + "JOIN product p ON user_order.product_id = p.id ", nativeQuery = true)
+    @Query(value = "SELECT SUM(p.price * uo.count) FROM user_order uo\n" +
+            "JOIN product p ON uo.product_id = p.id", nativeQuery = true)
     double totalSale();
 
     @Query("SELECT p FROM Product p WHERE CONCAT(p.name, p.category.name,p.description) LIKE %?1%")

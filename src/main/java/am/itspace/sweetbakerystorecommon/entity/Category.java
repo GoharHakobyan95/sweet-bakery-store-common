@@ -33,4 +33,8 @@ public class Category {
 
     @ManyToOne
     private User user;
+
+    public Category(String name) {
+        this.name = name;
+    }
 }

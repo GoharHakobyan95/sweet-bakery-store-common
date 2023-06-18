@@ -40,8 +40,6 @@ public class AddressService {
     }
 
     public Optional<Address> findById(Integer addressId) {
-        Optional<Address> addressById = addressRepository.findById(addressId);
-        addressById.ifPresent(address -> addressById.get());
-        return addressById;
+        return addressRepository.findById(addressId);
     }
 }

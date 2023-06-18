@@ -19,9 +19,6 @@ public class CreateUserDto {
     private String password;
     private String phone;
     private Address address;
-//    private String profilePic;
-//    private boolean isActive;
     private Date createAt;
-//    private String verifyToken;
 
 }
