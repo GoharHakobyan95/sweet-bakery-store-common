@@ -38,6 +38,7 @@ public class CreateUserDto {
     @NotBlank(message = "Name can't be empty.")
     @Size(min = 9, max = 20)
     private String phone;
+
     private Address address;
     private Date createAt;
 
